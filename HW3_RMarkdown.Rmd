@@ -15,7 +15,7 @@ Load libraries
 ```{r}
 library(tidyverse)
 library(p8105.datasets)
-
+library(knitr)
 data(instacart)
 ```
 
@@ -38,38 +38,61 @@ There are 134 aisles, and by far the aisles with the most orders are fresh veggi
 count(instacart, aisle, name = "aisle_count") %>%
   arrange(desc(aisle_count))
   
-instacart %>%
+plot = 
+  instacart %>%
   count(aisle, name = "aisle_count") %>%
   filter(aisle_count > 10000) %>%
-  ggplot(aes(x = aisle, y = aisle_count)) + geom_point() +
+  ggplot(aes(x = reorder(aisle, -aisle_count), y = aisle_count)) + geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
   labs(
-    title = "Numebr of Items From Popular Aisles",
+    title = "Number of Items From Popular Aisles",
     x = "Aisle",
     y = "Number of Items"
   )
-
-#turn x axis labels vertical
+  plot
 ```
 
 # Making a table: most popular items in aisles
 
 ```{r}
 instacart %>%
-  group_by(aisle) %>%
+  group_by(product_name, aisle) %>%
   summarize(
-    count_product = count(product_id),
-     n_item = n_distinct(product_name)) %>%
-  filter(aisle == "baking ingredients",
-         min_rank(desc(count_product)))
+    n_ordered = n()) %>%
+  group_by(aisle) %>%
+  filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits"),
+         min_rank(desc(n_ordered)) < 4 ) %>%
+  arrange(n_ordered, aisle)
 ```
 
 # Making a table: mean hour of the day items are ordered during the week
 
 ```{r}
-instacart %>%
+fun_food = 
+  instacart %>%
+  rename(order_hour = order_hour_of_day) %>%
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>%
   group_by(product_name, order_dow) %>%
-  t_mean = mean(order_hour) %>%
-  filter(product_name == "Pink Lady Apples", "Coffee Ice Cream")
+  summarize(mean_hour_of_day = mean(order_hour)) %>%
+  mutate(
+    day_of_week = recode(order_dow,
+                         '0' = "Sunday",
+                         '1' = "Monday",
+                         '2' = "Tuesday",
+                         '3' = "Wednesday",
+                         '4' = "Thursday",
+                         '5' = "Friday",
+                         '6' = "Saturday")) %>%
+  separate(mean_hour_of_day, into = c("hour", "minutes"), sep = 2) %>%
+  mutate(minutes = as.numeric(minutes),
+         minutes = round(minutes*60, digits = 0),
+         mean_hour_of_day = paste(hour, minutes, sep = ":")) %>%
+  select(product_name, day_of_week, mean_hour_of_day) %>%
+  pivot_wider(
+    names_from = "product_name",
+    values_from = "mean_hour_of_day") %>%
+  kable(format = "pandoc", caption = "Mean Hour of Day Items Are Ordered")
+fun_food
 ```
 
 ## Problem 2
@@ -79,9 +102,13 @@ data(brfss_smart2010)
 
 brfss_smart2010 %>%
   janitor::clean_names() %>%
+  rename(
+    state = locationabbr,
+    count = locationdesc) %>%
   filter(topic == "Overall Health") %>%
-  group_by(response) %>% #works to this point
-  mutate(response_level = fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
+  mutate(response_level, c("Poor", "Fair", "Good", "Very good", "Excellent"))
+  group_by(response) %>%
+
 ```
 
 In 2002, which states were observed at 7 or more locations. What about in 2010?
