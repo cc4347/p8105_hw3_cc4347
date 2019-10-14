@@ -100,22 +100,49 @@ fun_food
 ```{r}
 data(brfss_smart2010)
 
+brfss = 
 brfss_smart2010 %>%
   janitor::clean_names() %>%
   rename(
     state = locationabbr,
-    count = locationdesc) %>%
+    county = locationdesc,
+    cll = confidence_limit_low,
+    clh = confidence_limit_high) %>%
+  select(-data_value_footnote, -data_value_footnote_symbol, -location_id) %>%
   filter(topic == "Overall Health") %>%
-  mutate(response_level, c("Poor", "Fair", "Good", "Very good", "Excellent"))
-  group_by(response) %>%
-
+  mutate(response = factor(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
 
-In 2002, which states were observed at 7 or more locations. What about in 2010?
+# In 2002, which states were observed at 7 or more locations. What about in 2010?
+
+```{r}
+brfss_1 = 
+  brfss %>%
+  filter(year == "2010") %>%
+  distinct(state, county) %>%
+  count(state) %>%
+  filter(n >= 7) %>%
+  rename(number_sites = n)
+brfss_1
+
+
+brfss_2 =
+  brfss %>%
+  filter(year == "2002") %>%
+  distinct(state, county) %>%
+  count(state) %>%
+  filter(n >= 7) %>%
+  rename(number_sites = n)
+brfss_2
+  
+```
+
+There were 14 states observed in 2010 at 7 or more locations and 6 states observed in 2002 at 7 or more locations.
 
 # Construct a dataset
 
 ```{r}
+brfss_excellent =  
 brfss_smart2010 %>%
   janitor::clean_names() %>%
   filter(response == "Excellent") %>%
