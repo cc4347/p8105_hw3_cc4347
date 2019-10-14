@@ -192,22 +192,35 @@ accel =
 accel
 ```
 
-The resulting dataset has 1443 varaibles with 35 observations. It now has individual variables representing each activity, from 1 to 1440. There is a variable for the week and day of the study each activity took place as an integer value, as well as a variable that says what specific day of the week each activity took place, whether that was a weekday or weekend.
+The resulting dataset has 5 variables with 50400 observations. It now has a variable defining each activity by number. There is a variable for the week and day of the study each activity took place as an integer value, as well as a variable that says what specific day of the week each activity took place, whether that was a weekday or weekend.
 
 
 # Aggregating data across minutes
 
 ```{r}
 accel = 
-  
-  
+  group_by(day_number) %>%
+  summarize(sum_of_day = sum(activity)) %>%
+kable(format = "pandoc", caption = "Total Activity Per Day")
+accel
 ```
 
 # Making a single panel plot: 24hr activity each day
 
 ```{r}
-accel = 
-  
-   ggplot(aes(x = day, y = activity, color = day)) + geom_point()
+plot = accel %>% 
+  arrange(minute) %>%
+  ggplot(aes(x = minute, y = activity)) +
+  geom_point(aes(color = day_name), alpha = 0.75) +
+  ylab("Activity") +
+  labs(color = "Day of the Week") +
+  ggtitle("Daily Activity Levels") +
+  scale_x_continuous(
+    name = "Time of Day",
+    breaks = c(1, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440),
+    labels = c("12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm", "12am")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5))
+plot
+
 ```
 
