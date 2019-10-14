@@ -173,7 +173,7 @@ data_value_2010
 
 ```{r}
 accel = 
-  read.csv("accel_data.csv") %>%
+  read_csv("accel_data.csv") %>%
   janitor::clean_names() %>%
   pivot_longer(
     activity_1:activity_1440,
@@ -192,17 +192,18 @@ accel =
 accel
 ```
 
-The resulting dataset has 5 variables with 50400 observations. It now has a variable defining each activity by number. There is a variable for the week and day of the study each activity took place as an integer value, as well as a variable that says what specific day of the week each activity took place, whether that was a weekday or weekend.
+The resulting dataset has 6 variables with 50400 observations. It now has a variable defining each activity by number. There is a variable for the week and day of the study each activity took place as an integer value, as well as a variable that says what specific day of the week each activity took place, whether that was a weekday or weekend. Finally we have an integer minute variable for how the minute in the day that an activity took place for.
 
 
 # Aggregating data across minutes
 
 ```{r}
-accel = 
+accel_sum = 
+  accel %>%
   group_by(day_number) %>%
-  summarize(sum_of_day = sum(activity)) %>%
-kable(format = "pandoc", caption = "Total Activity Per Day")
-accel
+  summarize(sum_of_day = sum(activity))
+kable(accel_sum, format = "pandoc", caption = "Total Activity Per Day")
+accel_sum
 ```
 
 # Making a single panel plot: 24hr activity each day
