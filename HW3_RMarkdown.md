@@ -5,7 +5,7 @@ CC
 
 ## Problem 1
 
-Load libraries
+# Load Libraries and Instacart Data
 
 ``` r
 library(tidyverse)
@@ -14,7 +14,7 @@ library(knitr)
 data(instacart)
 ```
 
-# Describing the dataset
+# Describe the Dataset
 
 ``` r
 instacart %>%
@@ -40,7 +40,7 @@ This is followed by the packaged veggies/fruits aisle, from which about
 78,000 items have been ordered. The next most popular aisles include
 dairy products like yogurt, packaged cheese, and milk.
 
-# Making a plot
+# Making a Plot
 
 ``` r
 count(instacart, aisle, name = "aisle_count") %>%
@@ -74,9 +74,15 @@ plot =
   plot
 ```
 
-![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-3-1.png)<!-- --> This
+plot is organized with the aisles on the axis, and their labels have
+been flipped to be perpendicular to the axis in order to increase
+legibility. The plot has also been ordered in a descending fashion, with
+the aisles from which the greatest number of items have been ordered on
+the left side, and the aisles with the least items ordered on the right
+side. This plot shows a clear right skew.
 
-# Making a table: most popular items in aisles
+# Making a Table: Most Popular Items in Aisles
 
 ``` r
 instacart %>%
@@ -102,7 +108,11 @@ instacart %>%
 ## 9 Organic Baby Spinach                     packaged vegetables f…      9784
 ```
 
-# Making a table: mean hour of the day items are ordered during the week
+This table shows the most popular items ordered from the “dog food
+care”, “baking ingredients”, and “packaged vegetables fruits” aisles.
+The aisles are ordered by increasing number of items ordered.
+
+# Making a Table: Mean Hour of The Day Items Are Ordered
 
 ``` r
 fun_food = 
@@ -132,19 +142,22 @@ fun_food =
 fun_food
 ```
 
-| day\_of\_week | Coffee Ice Cream | Pink Lady Apples |
-| :------------ | :--------------- | :--------------- |
-| Sunday        | 13:46            | 13:26            |
-| Monday        | 14:19            | 11:22            |
-| Tuesday       | 15:23            | 11:42            |
-| Wednesday     | 15:19            | 14:15            |
-| Thursday      | 15:13            | 11:33            |
-| Friday        | 12:16            | 12:47            |
-| Saturday      | 13:50            | 11:56            |
+| day\_of\_week  | Coffee Ice Cream    | Pink Lady Apples                                                                                                                                                                                                                                                                                              |
+| :------------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Sunday         | 13:46               | 13:26                                                                                                                                                                                                                                                                                                         |
+| Monday         | 14:19               | 11:22                                                                                                                                                                                                                                                                                                         |
+| Tuesday        | 15:23               | 11:42                                                                                                                                                                                                                                                                                                         |
+| Wednesday      | 15:19               | 14:15                                                                                                                                                                                                                                                                                                         |
+| Thursday       | 15:13               | 11:33                                                                                                                                                                                                                                                                                                         |
+| Friday         | 12:16               | 12:47                                                                                                                                                                                                                                                                                                         |
+| Saturday       | 13:50               | 11:56                                                                                                                                                                                                                                                                                                         |
+| This table sho | ws the mean hour ea | ch day of the week that two different items, Coffee Ice Cream and Pink Lady Apples, are ordered. Item order times seem to be fairly consistent across the week, meaning that Coffee Ice Cream is often ordered within 3 hours, from 12-15, and Pink Lay Apples are often ordered between 3 hours, from 11-14. |
 
 Mean Hour of Day Items Are Ordered
 
 ## Problem 2
+
+# Cleaning and Load BRFSS Data
 
 ``` r
 data(brfss_smart2010)
@@ -162,7 +175,7 @@ brfss_smart2010 %>%
   mutate(response = factor(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
 
-# In 2002, which states were observed at 7 or more locations. What about in 2010?
+# State Observations Across Years
 
 ``` r
 brfss_1 = 
@@ -214,7 +227,7 @@ brfss_2
 There were 14 states observed in 2010 at 7 or more locations and 6
 states observed in 2002 at 7 or more locations.
 
-# Construct a dataset
+# Construct a Dataset and Make a Plot
 
 ``` r
 brfss_excellent =  
@@ -228,9 +241,11 @@ brfss_excellent
 ## Warning: Removed 3 rows containing missing values (geom_path).
 ```
 
-![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-8-1.png)<!-- --> This
+plot shows the average value of Excellent responses among state across
+time from 2002 to 2010.
 
-# Make a two-panel plot
+# Make a Two-Panel Plot
 
 ``` r
 data_value_2010 = 
@@ -247,9 +262,14 @@ data_value_2010 =
 data_value_2010
 ```
 
-![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> These
+two histogram plots show the distribution of responses by location
+solely in the state of New York, between 2006 and 2010. It would appear
+that overall distributions for each response type increased in 2010.
 
 ## Problem 3
+
+# Cleaning Data and Creating Activity Table
 
 ``` r
 accel = 
@@ -294,7 +314,7 @@ each activity took place, whether that was a weekday or weekend. Finally
 we have an integer minute variable for how the minute in the day that an
 activity took place for.
 
-# Aggregating data across minutes
+# Aggregating Data Across Minutes
 
 ``` r
 accel_sum = 
@@ -362,7 +382,12 @@ accel_sum
 ## # … with 25 more rows
 ```
 
-# Making a single panel plot: 24hr activity each day
+This table has aggregated activity time across minutes, or the total
+activity time per day. Some general trends seem to be increased activity
+around the time of weekends, from Friday-Sunday, and decreased overall
+activity during week days.
+
+# Making a Single Panel Plot: 24hr Activity Each Day
 
 ``` r
 plot = accel %>% 
@@ -380,4 +405,12 @@ plot = accel %>%
 plot
 ```
 
-![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](HW3_RMarkdown_files/figure-gfm/unnamed-chunk-12-1.png)<!-- --> This
+plot displays the individual’s daily activity level by day of the week,
+and it would appear that he exhibits greater activity levels from
+Friday-Sunday, as suggested by the previous table. For someone who is
+experiencing congestive heart failure, it is probably good to maintain
+as high of a level of activity as possible, while remaining within safe
+limits for the body. Based on this data, we may suggest that this
+individual try to improve his activity level during the week, as it may
+prove beneficial to his cardiovascular health.
