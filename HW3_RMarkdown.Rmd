@@ -143,25 +143,26 @@ There were 14 states observed in 2010 at 7 or more locations and 6 states observ
 
 ```{r}
 brfss_excellent =  
-brfss_smart2010 %>%
+brfss %>%
   janitor::clean_names() %>%
   filter(response == "Excellent") %>%
-  mutate(data_value_ave = mean(data_value)) %>% #how to average across a state??
-  select(year, locationabbr, data_value_ave) %>%
-  ggplot(aes(x = year, y = data_value_ave, color = locationabbr)) + geom_point() + geom_line(locationabbr)
+  group_by(year, state) %>%
+  summarize(data_value_ave = mean(data_value)) %>%
+  ggplot(aes(x = year, y = data_value_ave, group = state, color = state)) + geom_line()
+brfss_excellent
 ```
 
 # Make a two-panel plot
 
 ```{r}
 data_value_2010 = 
-  brfss_smart2010 %>%
+  brfss %>%
   group_by(response) %>% #how to order poor to excellent?
   filter(locationabbr == "NY", year == "2010") %>%
   ggplot(aes(x = , y = , color = )) + geom_point()
 
 data_value_2006 =
-  brfss_smart2010 %>%
+  brfss %>%
   group_by(response) %>% #how to order poor to excellent?
   filter(locationabbr == "NY", year == "2006") %>%
   ggplot(aes(x = , y = , color = )) + geom_point()
