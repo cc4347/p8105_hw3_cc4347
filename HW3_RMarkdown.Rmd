@@ -1,0 +1,147 @@
+---
+title: "HW 3"
+author: "CC"
+date: "10/14/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
+```
+
+## Problem 1
+
+Load libraries
+```{r}
+library(tidyverse)
+library(p8105.datasets)
+
+data(instacart)
+```
+
+# Describing the dataset
+
+```{r}
+instacart %>%
+  group_by(aisle) %>%
+  summarize(n = n()) %>%
+  view()
+```
+
+This dataset is quite large, with `r nrow(instacart)` observations from 131,209 unique users. There is a single order per user, and each row represents a product from an order. For example, user 1 has an order id of 2539329, which functions as their unique identifier, and they ordered from instacart on Monday, the second day of the week at 8AM. The 1st item they added to their cart was Soda, listed in the product name column. There are a few other variables of interest, including whether or not the user has ordered an item in the past (reordered) and days since the user last ordered from instacart (days_since_prior_order). In total there are `r ncol(instacart)` variables.
+
+There are 134 aisles, and by far the aisles with the most orders are fresh veggies and fresh fruits, with over 150,000 items ordered in each. This is followed by the packaged veggies/fruits aisle, from which about 78,000 items have been ordered. The next most popular aisles include dairy products like yogurt, packaged cheese, and milk.
+
+# Making a plot
+
+```{r}
+count(instacart, aisle, name = "aisle_count") %>%
+  arrange(desc(aisle_count))
+  
+instacart %>%
+  count(aisle, name = "aisle_count") %>%
+  filter(aisle_count > 10000) %>%
+  ggplot(aes(x = aisle, y = aisle_count)) + geom_point() +
+  labs(
+    title = "Numebr of Items From Popular Aisles",
+    x = "Aisle",
+    y = "Number of Items"
+  )
+
+#turn x axis labels vertical
+```
+
+# Making a table: most popular items in aisles
+
+```{r}
+instacart %>%
+  group_by(aisle) %>%
+  summarize(
+    count_product = count(product_id),
+     n_item = n_distinct(product_name)) %>%
+  filter(aisle == "baking ingredients",
+         min_rank(desc(count_product)))
+```
+
+# Making a table: mean hour of the day items are ordered during the week
+
+```{r}
+instacart %>%
+  group_by(product_name, order_dow) %>%
+  t_mean = mean(order_hour) %>%
+  filter(product_name == "Pink Lady Apples", "Coffee Ice Cream")
+```
+
+## Problem 2
+
+```{r}
+data(brfss_smart2010)
+
+brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  filter(topic == "Overall Health") %>%
+  group_by(response) %>% #works to this point
+  mutate(response_level = fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
+```
+
+In 2002, which states were observed at 7 or more locations. What about in 2010?
+
+# Construct a dataset
+
+```{r}
+brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  filter(response == "Excellent") %>%
+  mutate(data_value_ave = mean(data_value)) %>% #how to average across a state??
+  select(year, locationabbr, data_value_ave) %>%
+  ggplot(aes(x = year, y = data_value_ave, color = locationabbr)) + geom_point() + geom_line(locationabbr)
+```
+
+# Make a two-panel plot
+
+```{r}
+data_value_2010 = 
+  brfss_smart2010 %>%
+  group_by(response) %>% #how to order poor to excellent?
+  filter(locationabbr == "NY", year == "2010") %>%
+  ggplot(aes(x = , y = , color = )) + geom_point()
+
+data_value_2006 =
+  brfss_smart2010 %>%
+  group_by(response) %>% #how to order poor to excellent?
+  filter(locationabbr == "NY", year == "2006") %>%
+  ggplot(aes(x = , y = , color = )) + geom_point()
+
+(data_value_2010 + data_value_2006)
+```
+
+## Problem 3
+
+```{r}
+accel = 
+  read.csv("accel_data.csv") %>%
+  janitor::clean_names() %>%
+  separate(day, into = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"), convert = TRUE) %>%
+  mutate(Weekday = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"),
+         Weekend = c("Sunday", "Saturday"))
+#error: column `Weekday` must be length 35 (the number of rows) or one, not 5
+```
+
+Describe resulting dataset.
+
+
+# Aggregating data across minutes
+
+```{r}
+accel = 
+  
+```
+
+# Making a single panel plot: 24hr activity each day
+
+```{r}
+accel = 
+  
+   ggplot(aes(x = day, y = activity, color = day)) + geom_point()
+```
+
