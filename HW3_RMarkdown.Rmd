@@ -175,19 +175,31 @@ data_value_2010
 accel = 
   read.csv("accel_data.csv") %>%
   janitor::clean_names() %>%
-  separate(day, into = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"), convert = TRUE) %>%
-  mutate(Weekday = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"),
-         Weekend = c("Sunday", "Saturday"))
-#error: column `Weekday` must be length 35 (the number of rows) or one, not 5
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "activity_number",
+    values_to = "activity") %>%
+  separate(activity_number, into = c("activity_name", "minute")) %>%
+  mutate(
+    day_type = if_else(day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"), "day", day),
+    day_type = if_else(day_type %in% c("Saturday", "Sunday"), "weekend", day_type),
+    minute = as.numeric(minute)) %>%
+  select(-activity_name) %>%
+  rename(
+    day_number = day_id,
+    day_name = day
+  )
+accel
 ```
 
-Describe resulting dataset.
+The resulting dataset has 1443 varaibles with 35 observations. It now has individual variables representing each activity, from 1 to 1440. There is a variable for the week and day of the study each activity took place as an integer value, as well as a variable that says what specific day of the week each activity took place, whether that was a weekday or weekend.
 
 
 # Aggregating data across minutes
 
 ```{r}
 accel = 
+  
   
 ```
 
