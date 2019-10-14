@@ -157,17 +157,16 @@ brfss_excellent
 ```{r}
 data_value_2010 = 
   brfss %>%
-  group_by(response) %>% #how to order poor to excellent?
-  filter(locationabbr == "NY", year == "2010") %>%
-  ggplot(aes(x = , y = , color = )) + geom_point()
-
-data_value_2006 =
-  brfss %>%
-  group_by(response) %>% #how to order poor to excellent?
-  filter(locationabbr == "NY", year == "2006") %>%
-  ggplot(aes(x = , y = , color = )) + geom_point()
-
-(data_value_2010 + data_value_2006)
+  filter(state == "NY", year %in% c("2010", "2006")) %>%
+  select(year, response, data_value) %>%
+  ggplot(aes(x = response, y = data_value)) + 
+  geom_boxplot() +
+  facet_grid(~year) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  labs(
+    title = "Distribution of Responses by Location in New York"
+  )
+data_value_2010
 ```
 
 ## Problem 3
